@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": false,
+    "jsx": "react",
+    "jsxFactory": "JSXFacade.createElement",
+    "rootDir": "src",
+    "outDir": "dist/tsc"
+  },
+  "exclude": ["node_modules"]
+}
