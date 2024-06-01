@@ -24,12 +24,3 @@ interface JSXComponentElement extends JSXSharedElementAttributes {
 export type JSXElement = JSXNativeElement | JSXComponentElement;
 
 export type eventListenerProp = (e: Event) => void;
-
-export interface JSXRenderedElement {
-  type: JSXElementType;
-  tag: string | PureComponent;
-  props: Record<string, any> | null;
-  eventListeners: Record<string, eventListenerProp>;
-  element: HTMLElement | PureComponent;
-  children: Array<JSXRenderedElement | Text>;
-}

@@ -1,6 +1,5 @@
 import TestComponent from './components/TestComponent';
-import Renderer from './core/Renderer';
+import Renderer from './core/dom-utils/Renderer';
 
 const container = document.getElementById('root') as HTMLDivElement;
-const domTree = Renderer.renderRoot(TestComponent, container);
-console.log(domTree);
+Renderer.renderRoot(TestComponent, container);

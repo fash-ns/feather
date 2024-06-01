@@ -1,37 +1,33 @@
+import Renderer from '../dom-utils/Renderer';
 import type { ComponentProps } from '../interfaces/componentInterfaces';
-import type { JSXElement, JSXRenderedElement } from '../interfaces/JSXInterfaces';
-import Renderer from '../Renderer';
+import type { JSXElement } from '../interfaces/JSXInterfaces';
+import Comparator from './virtual-dom-utils/Comparator';
 
 abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   protected props: Props;
-  protected parentElement: HTMLElement;
-  protected tree: JSXElement;
-  protected renderedTree: JSXRenderedElement | Text;
+  private tree: JSXElement;
+  private rootElement: Text | HTMLElement;
 
-  public constructor(props: Props, parent: HTMLElement) {
+  public constructor(props: Props) {
     this.props = props;
-    this.parentElement = parent;
   }
 
-  public updateProps(props: Props) {
-    this.props = props;
-    //TODO: Handle update logic here
-  }
-
-  public mount() {
+  public createDomElement(): HTMLElement | Text {
     this.tree = this.render();
-    this.renderedTree = Renderer.appendDom(this.parentElement, this.tree);
-    console.log(this.tree);
+    this.rootElement = Renderer.createDomElement(this.tree);
+    console.log(`${this.constructor.name}'s native HTML element is created`, { virtualDom: this.tree, realDom: this.rootElement });
+    return this.rootElement;
   }
 
-  public unmount() {
-    Renderer.removeDom(this.renderedTree);
+  public getDomElement(): HTMLElement | Text {
+    return this.rootElement;
   }
 
-  //TODO: Test
-  public update() {
-    this.unmount();
-    this.mount();
+  protected update() {
+    const newTree = this.render();
+    console.log("NEW TREE", newTree);
+    Comparator.compare(this.rootElement, this.tree, newTree);
+    this.tree = newTree;
   }
 
   public abstract render(): JSXElement;
