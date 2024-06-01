@@ -4,7 +4,7 @@ class TestService {
   }
 
   public greet() {
-    alert('HELLO WORLD');
+    console.warn('HELLO WORLD');
   }
 }
 

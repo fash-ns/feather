@@ -3,6 +3,13 @@ import type { ClassConstructor } from './interfaces/globalInterfaces';
 import { JSXElement, JSXElementType } from './interfaces/JSXInterfaces';
 
 class JSXFacade {
+  /**
+   * Turns JSX syntax to pure JSXElement objects.
+   * @param element - name of the element. could be string (For native DOM elements) or an instance of a class which is inherited from PureComponent
+   * @param props - element props
+   * @param children - element children
+   * @returns formatted JSXElement.
+   */
   public static createElement(
     element: string | ClassConstructor<PureComponent>,
     props: Record<string, any>,

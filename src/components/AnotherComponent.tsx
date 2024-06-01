@@ -8,6 +8,19 @@ interface AnotherComponentPropsType extends ComponentProps {
 }
 
 class AnotherComponent extends PureComponent<AnotherComponentPropsType> {
+  private intervalId: ReturnType<typeof setInterval>;
+
+  private handleInterval() {
+    console.log('DAHANETO');
+  }
+  protected onMount(): void {
+    this.intervalId = setInterval(this.handleInterval, 1000);
+  }
+
+  protected onUnmount(): void {
+    clearInterval(this.intervalId);
+  }
+
   public render(): JSXElement {
     return (
       <span>

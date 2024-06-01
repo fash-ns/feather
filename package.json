@@ -1,9 +1,10 @@
 {
-  "name": "jsx",
-  "version": "1.0.0",
+  "name": "feather-jsx",
+  "version": "0.0.1",
   "main": "dist/tsc/index.js",
-  "description": "",
+  "description": "A super lightweight reactive engine for developing tiny client-side utils",
   "license": "MIT",
+  "author": "Farbod Shams <farbodshams.2000@gmail.com>",
   "devDependencies": {
     "@webpack-cli/generators": "^3.0.7",
     "css-loader": "^7.1.2",
@@ -22,7 +23,7 @@
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
-    "build:tsc": "tsc",
+    "build:tsc": "rm -rf ./dist/tsc; tsc",
     "watch": "webpack --watch",
     "serve": "webpack serve",
     "format": "prettier --write ."
