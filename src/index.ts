@@ -1,5 +1,8 @@
 import TestComponent from './components/TestComponent';
-import Renderer from './core/dom-utils/Renderer';
+import Eninge from './core/Engine';
+import TestService from './services/TestService';
 
 const container = document.getElementById('root') as HTMLDivElement;
-Renderer.renderRoot(TestComponent, container);
+const app = new Eninge();
+app.registerService(TestService);
+app.renderRoot(TestComponent, container);

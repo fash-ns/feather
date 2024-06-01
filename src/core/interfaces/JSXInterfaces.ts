@@ -11,14 +11,15 @@ interface JSXSharedElementAttributes {
   children: Array<JSXElement | string>;
 }
 
-interface JSXNativeElement extends JSXSharedElementAttributes {
+export interface JSXNativeElement extends JSXSharedElementAttributes {
   type: JSXElementType.Element;
   tag: string;
 }
 
-interface JSXComponentElement extends JSXSharedElementAttributes {
+export interface JSXComponentElement extends JSXSharedElementAttributes {
   type: JSXElementType.Component;
   tag: ClassConstructor<PureComponent>;
+  instance?: PureComponent;
 }
 
 export type JSXElement = JSXNativeElement | JSXComponentElement;

@@ -1,3 +1,3 @@
 export interface ClassConstructor<Instance = Object> {
-  new(props: any): Instance;
+  new (props: any): Instance;
 }

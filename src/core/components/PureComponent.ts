@@ -1,12 +1,13 @@
-import Renderer from '../dom-utils/Renderer';
+import Renderer from '../Engine';
 import type { ComponentProps } from '../interfaces/componentInterfaces';
 import type { JSXElement } from '../interfaces/JSXInterfaces';
-import Comparator from './virtual-dom-utils/Comparator';
+import Comparator from '../virtual-dom-utils/Comparator';
 
 abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   protected props: Props;
   private tree: JSXElement;
   private rootElement: Text | HTMLElement;
+  public engine: Renderer;
 
   public constructor(props: Props) {
     this.props = props;
@@ -14,8 +15,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
 
   public createDomElement(): HTMLElement | Text {
     this.tree = this.render();
-    this.rootElement = Renderer.createDomElement(this.tree);
-    console.log(`${this.constructor.name}'s native HTML element is created`, { virtualDom: this.tree, realDom: this.rootElement });
+    this.rootElement = this.engine.createDomElement(this.tree);
     return this.rootElement;
   }
 
@@ -23,11 +23,21 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
     return this.rootElement;
   }
 
+  public setProps(props: Props) {
+    this.props = props;
+    this.update();
+  }
+
   protected update() {
     const newTree = this.render();
-    console.log("NEW TREE", newTree);
-    Comparator.compare(this.rootElement, this.tree, newTree);
+    Comparator.compare(this.engine, this.rootElement, this.tree, newTree);
+    delete this.tree;
     this.tree = newTree;
+  }
+
+  public unmount() {
+    this.engine.removeEventListeners(this.rootElement, this.tree);
+    this.rootElement.remove();
   }
 
   public abstract render(): JSXElement;
