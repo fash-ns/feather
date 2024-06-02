@@ -25,7 +25,6 @@ class Comparator {
     oldVTree: JSXElement | string,
     newVTree: JSXElement | string | undefined,
   ) {
-    debugger;
     if (el instanceof Text) Comparator.compareTextNode(engine, el, oldVTree as string, newVTree);
     else if (el instanceof HTMLElement)
       Comparator.compareHTMLElement(engine, el, oldVTree as JSXNativeElement, newVTree);
