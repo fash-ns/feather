@@ -9,33 +9,34 @@ interface DetailsComponentPropsType extends ComponentProps {
   buttonId: string;
 }
 interface DetailsComponentStateType {
-  counter: number;
+  list: Array<string>;
 }
 
 class DetailsComponent extends Component<DetailsComponentPropsType, DetailsComponentStateType> {
   private listRef = Utils.createRef<HTMLUListElement>();
   public constructor(props: DetailsComponentPropsType) {
     super(props);
-    this.state = { counter: 0 };
-    this.handleDecrease = this.handleDecrease.bind(this);
-    this.handleIncrease = this.handleIncrease.bind(this);
+    this.state = { list: [] };
+    this.handleGenerate = this.handleGenerate.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
-  private handleIncrease() {
-    this.updateState((prev) => ({ counter: prev.counter + 1 }));
+  private handleGenerate() {
+    this.updateState((prev) => ({
+      list: [...prev.list, Math.floor(Math.random() * 1000000).toString()],
+    }));
     this.engine.getService<TestService>(TestService).greet();
-    // console.log(this.listRef.current);
   }
 
-  private handleDecrease() {
-    this.updateState((prev) => ({ counter: prev.counter - 1 }));
+  private handleDelete(id: string) {
+    this.updateState((prev) => ({ list: prev.list.filter((item) => item !== id) }));
   }
 
   protected onStateChange(
     prevState: DetailsComponentStateType,
     newState: DetailsComponentStateType,
   ): void {
-    if (newState.counter > 9) this.listRef.current.style.backgroundColor = '#f00';
+    if (newState.list.length > 9) this.listRef.current.style.backgroundColor = '#f00';
     else this.listRef.current.style.backgroundColor = '#0f0';
   }
 
@@ -43,27 +44,19 @@ class DetailsComponent extends Component<DetailsComponentPropsType, DetailsCompo
     return (
       <div id="details">
         <p>Hey there</p>
-        <button type="button" id={this.props.buttonId} onClick={this.handleIncrease}>
-          Increase
-        </button>
-        <button
-          type="button"
-          id={this.props.buttonId}
-          onClick={this.handleDecrease}
-          disabled={this.state.counter === 0}
-        >
-          Decrease
+        <button type="button" id={this.props.buttonId} onClick={this.handleGenerate}>
+          Generate ID
         </button>
         {/* {Utils.createPortal(<AnotherComponent count={this.state.counter} />, document.getElementById('root') as HTMLDivElement)} */}
-        {this.state.counter < 10 ? (
-          <AnotherComponent count={this.state.counter} />
+        {this.state.list.length < 10 ? (
+          <AnotherComponent count={this.state.list.length} />
         ) : (
           <span>Basse</span>
         )}
         <ul ref={this.listRef}>
-          {new Array(this.state.counter).fill(0).map((_, index) => (
-            <li onClick={() => console.log(`ITEM ${index} is clicked`)} id={`data-${index}`}>
-              ITEM {(index + 1).toString()}
+          {this.state.list.map((id, index) => (
+            <li onClick={() => this.handleDelete(id)} id={`data-${index}`}>
+              ITEM {(index + 1).toString()}: {id}
             </li>
           ))}
         </ul>

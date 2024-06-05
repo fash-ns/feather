@@ -45,10 +45,10 @@ class Engine {
    * @param container - An element developer wants the app to be rendered in
    */
   public renderRoot(Element: ClassConstructor<PureComponent>, container: HTMLElement) {
-    const instance = new Element(null);
-    instance.engine = this;
+    const instance = new Element({ engine: this });
     const nativeElement = instance.createDomElement();
-    container.appendChild(nativeElement);
+    const shadowContainer = container.attachShadow({ mode: 'closed' });
+    shadowContainer.appendChild(nativeElement);
   }
 
   /**
@@ -74,8 +74,11 @@ class Engine {
       return nativeElement;
     }
     if (element.type === JSXElementType.Component) {
-      const component = new element.tag({ ...element.props, children: element.children });
-      component.engine = this;
+      const component = new element.tag({
+        ...element.props,
+        children: element.children,
+        engine: this,
+      });
       const nativeElement = component.createDomElement();
       element.instance = component;
       return nativeElement;

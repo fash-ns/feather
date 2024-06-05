@@ -41,6 +41,14 @@ export interface JSXComponentElement extends JSXSharedElementAttributes {
 export type JSXElement = JSXNativeElement | JSXComponentElement;
 
 /**
+ * DomTree type after DOM is created according to virtual dom
+ */
+export interface DomTree {
+  element: HTMLElement | Text | PureComponent;
+  children: DomTree[];
+}
+
+/**
  * properties which sets a listener for an event should have a listener callback value. This type is the type of the listener callback.
  */
 export type EventListenerProp = (e: Event) => void;

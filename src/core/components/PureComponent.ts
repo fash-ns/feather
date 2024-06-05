@@ -13,7 +13,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   /**
    * Holds the current component props
    */
-  protected props: Props;
+  protected props: Omit<Props, 'engine'>;
   /**
    * A tree is built by calling the render method of a component. This tree is hold inside this variable
    */
@@ -25,9 +25,11 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   /**
    * The root engine instance is injected to all components. It's mainly useful for dependency injection.
    */
-  public engine: Engine;
+  protected engine: Engine;
 
   public constructor(props: Props) {
+    this.engine = props.engine;
+    delete props.engine;
     this.props = props;
   }
 
@@ -56,7 +58,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * It triggers an update for the component.
    * @param props - new props of the component.
    */
-  public setProps(props: Props): void {
+  public setProps(props: Omit<Props, 'engine'>): void {
     this.onPropsChange(this.props, props);
     this.props = props;
     this.update();
@@ -100,7 +102,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * @param prevProps - props before being updated
    * @param newProps = props after update
    */
-  protected onPropsChange(prevProps: Props, newProps: Props) {}
+  protected onPropsChange(prevProps: Omit<Props, 'engine'>, newProps: Omit<Props, 'engine'>) {}
 
   /**
    * All the JSX render should be returned by this method. All components must implement this method.
