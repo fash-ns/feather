@@ -17,9 +17,9 @@ class Counter extends Component {
           <p>
             Edit <code>src/App.tsx</code> to test how does it work
           </p>
-        ) : Utils.createPortal((<p>
-          basse
-        </p>), document.body)}
+        ) : (
+          Utils.createPortal(<p>basse</p>, document.body)
+        )}
       </div>
     );
   }

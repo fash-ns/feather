@@ -31,7 +31,10 @@ class DialogTest extends Component<ComponentProps, DialogTestState> {
     return (
       <div>
         <button onClick={this.handleOpenDialog}>Open Dialog</button>
-        {Utils.createPortal(<Dialog open={this.state.openDialog} onClose={this.handleCloseDialog} />, document.body)}
+        {Utils.createPortal(
+          <Dialog open={this.state.openDialog} onClose={this.handleCloseDialog} />,
+          document.body,
+        )}
       </div>
     );
   }

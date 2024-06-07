@@ -46,7 +46,11 @@ class Comparator {
       let portalCount = 0;
 
       for (let i = 0; i < maxLen; i++) {
-        if (i < oldVTree.children.length && typeof oldVTree.children[i] !== "string" && !!(oldVTree.children[i] as JSXElement).portalContainer)
+        if (
+          i < oldVTree.children.length &&
+          typeof oldVTree.children[i] !== 'string' &&
+          !!(oldVTree.children[i] as JSXElement).portalContainer
+        )
           portalCount += 1;
         const childNodeIndex = i - portalCount;
 
