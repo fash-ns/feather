@@ -1,5 +1,5 @@
 import PureComponent from './components/PureComponent';
-import PropsFacade from './dom-utils/PropsFacade';
+import DomFacade from './dom-utils/DomFacade';
 import { ClassConstructor } from './interfaces/globalInterfaces';
 import type { JSXElement } from './interfaces/JSXInterfaces';
 import { JSXElementType } from './interfaces/JSXInterfaces';
@@ -23,10 +23,8 @@ class Engine {
    * Registers a service
    * @param constructor - Class constructor of a service
    */
-  public registerService(services: any[]) {
-    for (const constructor of services) {
-      this.di.register(constructor, new constructor());
-    }
+  public registerService(service: any, ...args: any) {
+    this.di.register(service, new service(...args));
   }
 
   /**
@@ -47,8 +45,7 @@ class Engine {
   public renderRoot(Element: ClassConstructor<PureComponent>, container: HTMLElement) {
     const instance = new Element({ engine: this });
     const nativeElement = instance.createDomElement();
-    const shadowContainer = container.attachShadow({ mode: 'closed' });
-    shadowContainer.appendChild(nativeElement);
+    container.appendChild(nativeElement);
   }
 
   /**
@@ -64,7 +61,7 @@ class Engine {
 
     if (element.type === JSXElementType.Element) {
       const nativeElement = document.createElement(element.tag);
-      if (element.props) PropsFacade.setElementAttributes(nativeElement, element.props);
+      if (element.props) DomFacade.setElementAttributes(nativeElement, element.props);
 
       if (element.children) {
         element.children.forEach((child) => {
@@ -75,7 +72,7 @@ class Engine {
     }
     if (element.type === JSXElementType.Component) {
       const component = new element.tag({
-        ...element.props,
+        ...(element.props ?? {}),
         children: element.children,
         engine: this,
       });
@@ -92,18 +89,39 @@ class Engine {
 
   /**
    * Creates DOM element from virtual dom and renders it to the provided parent HTMLElement.
-   * @param parent
-   * @param element - Virtual dom tree
+   * @param parent - Container HTMLElement
+   * @param vDom - Virtual dom tree
    * @returns
    */
   public appendDomAsChildren(
     parent: HTMLElement,
-    element: JSXElement | string,
+    vDom: JSXElement | string,
   ): Text | HTMLElement | PureComponent {
-    const nativeElement = this.createDomElement(element);
-    if (typeof element !== 'string' && element.portalElement)
-      return element.portalElement.appendChild(nativeElement);
-    return parent.appendChild(nativeElement);
+    const nativeElement = this.createDomElement(vDom);
+    if (typeof vDom !== 'string' && vDom.portalContainer) {
+      vDom.portalElement = nativeElement;
+      vDom.portalContainer.appendChild(nativeElement);
+    } else parent.appendChild(nativeElement);
+    return nativeElement;
+  }
+
+  /**
+   * Creates DOM element from virtual dom and renders it after the provided sibling element.
+   * Sibling element could either be HTMLElement or Text
+   * @param element - Sibling HTMLElement or TextNode
+   * @param vDom - Virtual dom tree
+   * @returns
+   */
+  public appendDomAsSibling(
+    element: HTMLElement | Text,
+    vDom: JSXElement | string,
+  ): Text | HTMLElement | PureComponent {
+    const newElement = this.createDomElement(vDom);
+    if (typeof vDom !== 'string' && vDom.portalContainer) {
+      vDom.portalElement = newElement;
+      vDom.portalContainer.appendChild(newElement);
+    } else element.after(newElement);
+    return newElement;
   }
 
   /**
@@ -114,14 +132,21 @@ class Engine {
    * @returns
    */
   public replaceElement(
-    prevElement: HTMLElement,
-    prevVDomTree: JSXElement,
-    newVDomTree: JSXElement,
+    prevElement: HTMLElement | Text | PureComponent,
+    prevVDomTree: JSXElement | string,
+    newVDomTree: JSXElement | string,
   ) {
-    const newElement = this.createDomElement(newVDomTree);
-    prevElement.after(newElement);
-    PropsFacade.removeEventListeners(prevElement, prevVDomTree);
-    prevElement.remove();
+    if (prevElement instanceof PureComponent) {
+      const element = this.appendDomAsSibling(prevElement.getDomElement(), newVDomTree);
+      prevElement.unmount();
+      return element;
+    } else {
+      const element = this.appendDomAsSibling(prevElement, newVDomTree);
+      if (typeof prevVDomTree !== 'string')
+        DomFacade.removeEventListeners(prevElement, prevVDomTree);
+      prevElement.remove();
+      return element;
+    }
   }
 }
 

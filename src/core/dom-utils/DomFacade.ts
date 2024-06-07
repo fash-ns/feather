@@ -5,9 +5,9 @@ import {
 } from '../interfaces/JSXInterfaces';
 
 /**
- * Facade for dealing with DOM elements attributes and event listeners.
+ * Facade for dealing with DOM elements
  */
-class PropsFacade {
+class DomFacade {
   /**
    * checks the props and returns the event listeners from props. Event listeners are props that starts with 'on'
    * @param props
@@ -54,9 +54,10 @@ class PropsFacade {
    * @param element - the native HTMLElement
    * @param vDomTree - Virual dom tree of the provided element
    */
-  public static removeEventListeners(element: Node, vDomTree: JSXElement) {
+  public static removeEventListeners(element: Node, vDomTree: JSXElement | string) {
+    if (typeof vDomTree === 'string') return;
     if (vDomTree.type === JSXElementType.Element && vDomTree.props !== null) {
-      Object.entries(PropsFacade.getEventListenersFromProps(vDomTree.props)).forEach(
+      Object.entries(DomFacade.getEventListenersFromProps(vDomTree.props)).forEach(
         ([event, listenerCallback]) => {
           element.removeEventListener(event, listenerCallback);
         },
@@ -67,6 +68,15 @@ class PropsFacade {
       if (typeof child !== 'string') this.removeEventListeners(element.childNodes[index], child);
     });
   }
+
+  public static removeChildNode(element: ChildNode, vDomTree: JSXElement | string) {
+    if (typeof vDomTree !== 'string' && vDomTree.type === JSXElementType.Component) {
+      vDomTree.instance.unmount();
+    } else {
+      this.removeEventListeners(element, vDomTree);
+      element.remove();
+    }
+  }
 }
 
-export default PropsFacade;
+export default DomFacade;

@@ -15,7 +15,8 @@ export enum JSXElementType {
 interface JSXSharedElementAttributes {
   props: Record<string, any> | null;
   children: Array<JSXElement | string>;
-  portalElement?: HTMLElement;
+  portalContainer?: HTMLElement;
+  portalElement?: HTMLElement | Text;
 }
 
 /**
@@ -39,14 +40,6 @@ export interface JSXComponentElement extends JSXSharedElementAttributes {
  * JSXElement must be a native element or a component
  */
 export type JSXElement = JSXNativeElement | JSXComponentElement;
-
-/**
- * DomTree type after DOM is created according to virtual dom
- */
-export interface DomTree {
-  element: HTMLElement | Text | PureComponent;
-  children: DomTree[];
-}
 
 /**
  * properties which sets a listener for an event should have a listener callback value. This type is the type of the listener callback.

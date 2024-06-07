@@ -25,7 +25,7 @@ class Utils {
    * @see Engine.appendDomAsChildren to check how portals are handled.
    */
   public static createPortal(tree: JSXElement, element: HTMLElement): JSXElement {
-    tree.portalElement = element;
+    tree.portalContainer = element;
     return tree;
   }
 }

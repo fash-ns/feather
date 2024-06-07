@@ -14,13 +14,17 @@ class JSXFacade {
   public static createElement(
     element: string | ClassConstructor<PureComponent>,
     props: Record<string, any>,
-    ...children: Array<JSXElement | string | Array<JSXElement | string>>
+    ...children: Array<JSXElement | string | boolean | Array<JSXElement | string | boolean>>
   ): JSXElement {
-    const flatChildren: Array<JSXElement | string> = [];
+    let flatChildren: Array<JSXElement | string> = [];
     children.forEach((child) => {
-      if (Array.isArray(child) && typeof child !== 'string') flatChildren.push(...child);
-      else flatChildren.push(child);
+      if (Array.isArray(child) && typeof child !== 'string')
+        flatChildren.push(
+          ...(child.filter((item) => typeof item !== 'boolean') as Array<JSXElement | string>),
+        );
+      else if (typeof child !== 'boolean') flatChildren.push(child);
     });
+    flatChildren = flatChildren.filter((child) => typeof child !== 'boolean');
 
     if (typeof element === 'string')
       return {

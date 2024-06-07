@@ -1,0 +1,22 @@
+.dialog-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 8px;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.dialog-container > .dialog-body {
+  width: 500px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #000;
+  text-align: start;
+}

@@ -1,10 +1,12 @@
 class TestService {
-  constructor() {
+  private name: string;
+  constructor(name: string) {
     console.log('Service is initialized');
+    this.name = name;
   }
 
   public greet() {
-    console.warn('HELLO WORLD');
+    console.warn('HELLO ' + this.name);
   }
 }
 

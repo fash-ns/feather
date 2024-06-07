@@ -1,8 +1,8 @@
-import PropsFacade from '../dom-utils/PropsFacade';
+import Comparator from '../comparator/Comparator';
+import DomFacade from '../dom-utils/DomFacade';
 import Engine from '../Engine';
 import type { ComponentProps } from '../interfaces/componentInterfaces';
 import type { JSXElement } from '../interfaces/JSXInterfaces';
-import Comparator from '../virtual-dom-utils/Comparator';
 
 /**
  * @public
@@ -21,7 +21,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   /**
    * After the DOM is created for the component, It is hold inside this variable
    */
-  private rootElement: Text | HTMLElement;
+  private rootElement: Text | HTMLElement | PureComponent;
   /**
    * The root engine instance is injected to all components. It's mainly useful for dependency injection.
    */
@@ -50,6 +50,9 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * @returns The root element created by component.
    */
   public getDomElement(): HTMLElement | Text {
+    if (this.rootElement instanceof PureComponent) {
+      return this.rootElement.getDomElement();
+    }
     return this.rootElement;
   }
 
@@ -71,9 +74,14 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   protected update(): void {
     const newTree = this.render();
-    Comparator.compare(this.engine, this.rootElement, this.tree, newTree);
-    delete this.tree;
+    this.rootElement = Comparator.compare(
+      this.engine,
+      this.rootElement,
+      this.tree,
+      newTree,
+    );
     this.tree = newTree;
+    this.onUpdateFinished();
   }
 
   /**
@@ -81,8 +89,8 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   public unmount(): void {
     this.onUnmount();
-    PropsFacade.removeEventListeners(this.rootElement, this.tree);
-    this.rootElement.remove();
+    DomFacade.removeEventListeners(this.getDomElement(), this.tree);
+    this.getDomElement().remove();
     delete this.tree;
     delete this.rootElement;
   }
@@ -90,19 +98,24 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   /**
    * onMount method is triggered when the component's DOM is rendered for the first time.
    */
-  protected onMount(): void {}
+  protected onMount(): void { }
 
   /**
    * onUnmount method is triggered when the component is being to be unmounted.
    */
-  protected onUnmount() {}
+  protected onUnmount(): void { }
 
   /**
    * onPropsChange method is triggered when the component's props are going to be updated.
    * @param prevProps - props before being updated
    * @param newProps = props after update
    */
-  protected onPropsChange(prevProps: Omit<Props, 'engine'>, newProps: Omit<Props, 'engine'>) {}
+  protected onPropsChange(prevProps: Omit<Props, 'engine'>, newProps: Omit<Props, 'engine'>): void { }
+
+  /**
+   * onUpdateFinished method is triggered after the component is updated.
+   */
+  protected onUpdateFinished(): void { }
 
   /**
    * All the JSX render should be returned by this method. All components must implement this method.
