@@ -62,6 +62,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * @param props - new props of the component.
    */
   public setProps(props: Omit<Props, 'engine'>): void {
+    if (Object.is(props, this.props)) return;
     this.onPropsChange(this.props, props);
     this.props = props;
     this.update();
