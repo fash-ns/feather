@@ -4,7 +4,8 @@ import PureComponent from './PureComponent';
 /**
  * @public
  * @inheritdoc PureComponent
- * Components support state in addition to PureComponents functionalities. It's generic typed since developer can define the type of the component's props and states.
+ * Components support state in addition to PureComponents functionalities.
+ * It's generic typed since developer can define the type of the component's props and states.
  */
 abstract class Component<
   Props extends ComponentProps = ComponentProps,

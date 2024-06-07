@@ -6,7 +6,8 @@ import type { JSXElement } from '../interfaces/JSXInterfaces';
 
 /**
  * @public
- * Base class for implementing app components. It's generic typed since developer can define the type of the component's props. Component props type should be inherited from ComponentProps
+ * Base class for implementing app components. It's generic typed since developer can define
+ * the type of the component's props. Component props type should be inherited from ComponentProps
  * @see ComponentProps to check which keys are available out of the box for a component.
  */
 abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
@@ -50,9 +51,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * @returns The root element created by component.
    */
   public getDomElement(): HTMLElement | Text {
-    if (this.rootElement instanceof PureComponent) {
-      return this.rootElement.getDomElement();
-    }
+    if (this.rootElement instanceof PureComponent) return this.rootElement.getDomElement();
     return this.rootElement;
   }
 

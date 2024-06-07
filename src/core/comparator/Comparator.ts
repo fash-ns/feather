@@ -1,15 +1,12 @@
 import PureComponent from '../components/PureComponent';
 import DomFacade from '../dom-utils/DomFacade';
-import Engine from '../Engine';
+import type Engine from '../Engine';
 import type { JSXComponentElement, JSXElement } from '../interfaces/JSXInterfaces';
 import { JSXElementType } from '../interfaces/JSXInterfaces';
-import ComparatorUtils from './ComparatorUtils';
 
 class Comparator {
   /**
-   *
    * Compares old tree with new tree and updates the DOM elements.
-   * Elements should be a TextNode, an HTMLElement or a component. For each of these types, a separate method is implemented
    *
    * @param engine - An instance of engine
    * @param el - The root element of the tree
@@ -30,11 +27,11 @@ class Comparator {
       }
       return;
     }
-    if (ComparatorUtils.shouldReplaceElement(oldVTree, newVTree))
+    if (Comparator.shouldReplaceElement(oldVTree, newVTree))
       return engine.replaceElement(el, oldVTree, newVTree);
 
     if (!(el instanceof Text) && typeof oldVTree !== 'string' && typeof newVTree !== 'string')
-      ComparatorUtils.updateElementProps(el, oldVTree, newVTree);
+      Comparator.updateElementProps(el, oldVTree, newVTree);
 
     //Diff children
     if (el instanceof HTMLElement) {
@@ -86,6 +83,63 @@ class Comparator {
       }
     }
     return el;
+  }
+
+  /**
+   * Checks whether an element needs to be replaced by the new created element.
+   * This decision is made by comparing current virtual dom tree with new one.
+   * @param oldVTree - Current DOM virtual tree
+   * @param newVTree - New virtual dom
+   * @returns Boolean: true if the element should be re-created from the new
+   * virtual dom tree and false otherwise.
+   */
+  public static shouldReplaceElement(
+    oldVTree: JSXElement | string,
+    newVTree: JSXElement | string,
+  ): boolean {
+    // one is string and one is JSXElement
+    if (typeof oldVTree !== typeof newVTree) return true;
+
+    // Both are strings but with different texts
+    if (typeof oldVTree === 'string' && typeof newVTree === 'string') {
+      if (oldVTree !== newVTree) return true;
+      return false;
+    }
+
+    oldVTree = oldVTree as JSXElement;
+    newVTree = newVTree as JSXElement;
+
+    // Both are JSXElements but with different portal containers
+    if (oldVTree.portalContainer !== newVTree.portalContainer) return true;
+
+    // Both are JSXElements but with different types
+    if (oldVTree.type !== newVTree.type) return true;
+
+    // Both are JSXElements and renders HTMLElement but with different HTML tags
+    // Or Both are JSXElements and renders Component but different components
+    if (oldVTree.tag !== newVTree.tag) return true;
+
+    return false;
+  }
+
+  /**
+   * Updates element's props from virtual dom tree
+   * @param el - Element whom props needs to be updated
+   * @param oldVTree - Current DOM virtual tree
+   * @param newVTree - New virtual dom
+   */
+  public static updateElementProps(
+    el: HTMLElement | PureComponent,
+    oldVTree: JSXElement,
+    newVTree: JSXElement,
+  ) {
+    if (el instanceof HTMLElement) {
+      DomFacade.removeEventListeners(el, oldVTree);
+      DomFacade.setElementAttributes(el, newVTree.props);
+    } else if (el instanceof PureComponent) {
+      el.setProps({ ...newVTree.props, children: newVTree.children });
+      (newVTree as JSXComponentElement).instance = el;
+    }
   }
 }
 
