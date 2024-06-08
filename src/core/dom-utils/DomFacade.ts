@@ -69,32 +69,25 @@ class DomFacade {
     if (typeof vDomTree === 'string') return;
     this.removeRootEventListeners(element, vDomTree);
 
-    let portalCount = 0;
     vDomTree.children.forEach((child, index) => {
       if (typeof child !== 'string') {
         if (!!child.portalContainer) {
           this.removeEventListeners(child.portalElement, child);
-          portalCount += 1;
-        } else this.removeEventListeners(element.childNodes[index - portalCount], child);
+        } else this.removeEventListeners(element.childNodes[index], child);
       }
     });
   }
 
   public static removeChildNode(element: ChildNode, vDomTree: JSXElement | string) {
     if (typeof vDomTree !== 'string') {
-      let portalCount = 0;
       vDomTree.children.forEach((child) => {
-        if (typeof child !== 'string' && !!child.portalContainer) {
-          this.removeChildNode(child.portalElement, child);
-          portalCount += 1;
-        } else {
-          this.removeChildNode(element.childNodes.item(0), child);
-        }
+        this.removeChildNode(element.childNodes.item(0), child);
       });
       if (vDomTree.type === JSXElementType.Component) vDomTree.instance.unmount();
       else if (!!vDomTree.portalContainer) {
         this.removeRootEventListeners(vDomTree.portalElement, vDomTree);
         vDomTree.portalElement.remove();
+        element.remove();
       } else {
         this.removeRootEventListeners(element, vDomTree);
         element.remove();

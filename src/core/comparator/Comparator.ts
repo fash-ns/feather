@@ -1,8 +1,11 @@
 import PureComponent from '../components/PureComponent';
 import DomFacade from '../dom-utils/DomFacade';
 import type Engine from '../Engine';
-import type { JSXComponentElement, JSXElement } from '../interfaces/JSXInterfaces';
-import { JSXElementType } from '../interfaces/JSXInterfaces';
+import {
+  JSXElementType,
+  type JSXComponentElement,
+  type JSXElement,
+} from '../interfaces/JSXInterfaces';
 
 class Comparator {
   /**
@@ -29,17 +32,16 @@ class Comparator {
     if (newVTree === undefined) {
       if (el instanceof PureComponent) el.unmount();
       else {
-        DomFacade.removeEventListeners(el, oldVTree);
-        el.remove();
+        DomFacade.removeChildNode(el, oldVTree);
       }
       return;
     }
     if (this.shouldReplaceElement(oldVTree, newVTree))
       return this.engine.replaceElement(el, oldVTree, newVTree);
 
-    if (!(el instanceof Text) && typeof oldVTree !== 'string' && typeof newVTree !== 'string') {
-      this.updateElementProps(el, oldVTree, newVTree);
-      newVTree.portalElement = oldVTree.portalElement;
+    if (typeof oldVTree !== 'string' && typeof newVTree !== 'string') {
+      if (!(el instanceof Text)) this.updateElementProps(el, oldVTree, newVTree);
+      if (!!oldVTree.portalContainer) newVTree.portalElement = oldVTree.portalElement;
     }
 
     //Diff children
@@ -49,21 +51,11 @@ class Comparator {
       const childNodesLen = el.childNodes.length;
       const vDomChildrenLen = newVTree.children.length;
       const maxLen = Math.max(childNodesLen, vDomChildrenLen);
-      let portalCount = 0;
 
       for (let i = 0; i < maxLen; i++) {
-        if (
-          i < oldVTree.children.length &&
-          typeof oldVTree.children[i] !== 'string' &&
-          !!(oldVTree.children[i] as JSXElement).portalContainer
-        )
-          portalCount += 1;
-        const childNodeIndex = i - portalCount;
-
-        if (childNodesLen <= childNodeIndex)
-          this.engine.appendDomAsChildren(el, newVTree.children[i]);
+        if (childNodesLen <= i) this.engine.appendDomAsChildren(el, newVTree.children[i]);
         else if (vDomChildrenLen <= i) {
-          DomFacade.removeChildNode(el.childNodes.item(childNodeIndex), oldVTree);
+          DomFacade.removeChildNode(el.childNodes.item(i), oldVTree);
         } else if (
           typeof oldVTree.children[i] !== 'string' &&
           (oldVTree.children[i] as JSXElement).type === JSXElementType.Component
@@ -74,14 +66,11 @@ class Comparator {
             newVTree.children[i],
           );
         } else {
-          if (!!oldVTree.portalElement)
-            this.compare(oldVTree.portalElement, oldVTree.children[i], newVTree.children[i]);
-          else
-            this.compare(
-              el.childNodes.item(i) as HTMLElement | Text,
-              oldVTree.children[i],
-              newVTree.children[i],
-            );
+          this.compare(
+            el.childNodes.item(i) as HTMLElement | Text,
+            oldVTree.children[i],
+            newVTree.children[i],
+          );
         }
       }
     }

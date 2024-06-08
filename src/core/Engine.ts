@@ -113,6 +113,7 @@ class Engine {
     if (typeof vDom !== 'string' && vDom.portalContainer) {
       vDom.portalElement = nativeElement;
       vDom.portalContainer.appendChild(nativeElement);
+      parent.appendChild(document.createTextNode(''));
     } else parent.appendChild(nativeElement);
     return nativeElement;
   }
@@ -132,6 +133,7 @@ class Engine {
     if (typeof vDom !== 'string' && vDom.portalContainer) {
       vDom.portalElement = newElement;
       vDom.portalContainer.appendChild(newElement);
+      element.after(document.createTextNode(''));
     } else element.after(newElement);
     return newElement;
   }
@@ -154,9 +156,10 @@ class Engine {
       return element;
     } else {
       const element = this.appendDomAsSibling(prevElement, newVDomTree);
-      if (typeof prevVDomTree !== 'string')
-        DomFacade.removeEventListeners(prevElement, prevVDomTree);
-      prevElement.remove();
+      if (typeof prevVDomTree !== 'string' && !!prevVDomTree.portalContainer) {
+        DomFacade.removeChildNode(prevVDomTree.portalElement, prevVDomTree);
+        prevElement.remove();
+      } else DomFacade.removeChildNode(prevElement, prevVDomTree);
       return element;
     }
   }
