@@ -13,6 +13,7 @@ class Counter extends Component {
         <button onClick={() => this.updateState((prev) => ({ count: prev.count + 1 }))}>
           count is {this.state.count.toString()}
         </button>
+        <button onClick={() => this.updateState((prev) => ({ count: prev.count - 1 }))}>-</button>
         {this.state.count < 10 ? (
           <p>
             Edit <code>src/App.tsx</code> to test how does it work

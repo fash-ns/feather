@@ -15,6 +15,11 @@ class Engine {
    */
   private di: ServiceContainer;
 
+  /**
+   * when calling renderRoot, the instance of root component will be holded in this attribute
+   */
+  private rootComponent: PureComponent;
+
   public constructor() {
     this.di = new ServiceContainer();
   }
@@ -43,9 +48,16 @@ class Engine {
    * @param container - An element developer wants the app to be rendered in
    */
   public renderRoot(Element: ClassConstructor<PureComponent>, container: HTMLElement) {
-    const instance = new Element({ engine: this });
-    const nativeElement = instance.createDomElement();
+    this.rootComponent = new Element({ engine: this });
+    const nativeElement = this.rootComponent.createDomElement();
     container.appendChild(nativeElement);
+  }
+
+  /**
+   * Unmounts the root component.
+   */
+  public unmountRoot() {
+    this.rootComponent.unmount();
   }
 
   /**

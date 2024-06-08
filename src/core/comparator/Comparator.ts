@@ -37,8 +37,10 @@ class Comparator {
     if (this.shouldReplaceElement(oldVTree, newVTree))
       return this.engine.replaceElement(el, oldVTree, newVTree);
 
-    if (!(el instanceof Text) && typeof oldVTree !== 'string' && typeof newVTree !== 'string')
+    if (!(el instanceof Text) && typeof oldVTree !== 'string' && typeof newVTree !== 'string') {
       this.updateElementProps(el, oldVTree, newVTree);
+      newVTree.portalElement = oldVTree.portalElement;
+    }
 
     //Diff children
     if (el instanceof HTMLElement) {

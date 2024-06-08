@@ -91,7 +91,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   public unmount(): void {
     this.onUnmount();
     DomFacade.removeEventListeners(this.getDomElement(), this.tree);
-    this.getDomElement().remove();
+    DomFacade.removeChildNode(this.getDomElement(), this.tree);
     delete this.tree;
     delete this.rootElement;
   }

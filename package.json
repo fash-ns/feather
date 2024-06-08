@@ -1,8 +1,9 @@
 {
   "name": "feather-jsx",
-  "version": "0.0.1",
-  "main": "dist/tsc/index.js",
   "description": "A super lightweight reactive engine for developing tiny client-side utils",
+  "version": "0.0.1",
+  "main": "index.js",
+  "types": "index.d.ts",
   "license": "MIT",
   "author": "Farbod Shams <farbodshams.2000@gmail.com>",
   "devDependencies": {

@@ -3,6 +3,9 @@ import type { ClassConstructor } from './interfaces/globalInterfaces';
 import type { JSXElement } from './interfaces/JSXInterfaces';
 import { JSXElementType } from './interfaces/JSXInterfaces';
 
+/**
+ * JSX to virtual DOM converter
+ */
 class JSXFacade {
   /**
    * Turns JSX syntax to pure JSXElement objects.
