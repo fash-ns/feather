@@ -6,6 +6,14 @@ import { JSXElementType } from '../interfaces/JSXInterfaces';
 
 class Comparator {
   /**
+   * An instance of engine
+   */
+  private engine: Engine;
+
+  public constructor(engine: Engine) {
+    this.engine = engine;
+  }
+  /**
    * Compares old tree with new tree and updates the DOM elements.
    *
    * @param engine - An instance of engine
@@ -13,8 +21,7 @@ class Comparator {
    * @param oldVTree - Old virtual dom tree
    * @param newVTree - New virtual dom tree
    */
-  public static compare(
-    engine: Engine,
+  public compare(
     el: HTMLElement | Text | PureComponent,
     oldVTree: JSXElement | string,
     newVTree: JSXElement | string | undefined,
@@ -27,11 +34,11 @@ class Comparator {
       }
       return;
     }
-    if (Comparator.shouldReplaceElement(oldVTree, newVTree))
-      return engine.replaceElement(el, oldVTree, newVTree);
+    if (this.shouldReplaceElement(oldVTree, newVTree))
+      return this.engine.replaceElement(el, oldVTree, newVTree);
 
     if (!(el instanceof Text) && typeof oldVTree !== 'string' && typeof newVTree !== 'string')
-      Comparator.updateElementProps(el, oldVTree, newVTree);
+      this.updateElementProps(el, oldVTree, newVTree);
 
     //Diff children
     if (el instanceof HTMLElement) {
@@ -51,30 +58,24 @@ class Comparator {
           portalCount += 1;
         const childNodeIndex = i - portalCount;
 
-        if (childNodesLen <= childNodeIndex) engine.appendDomAsChildren(el, newVTree.children[i]);
+        if (childNodesLen <= childNodeIndex)
+          this.engine.appendDomAsChildren(el, newVTree.children[i]);
         else if (vDomChildrenLen <= i) {
           DomFacade.removeChildNode(el.childNodes.item(childNodeIndex), oldVTree);
         } else if (
           typeof oldVTree.children[i] !== 'string' &&
           (oldVTree.children[i] as JSXElement).type === JSXElementType.Component
         ) {
-          Comparator.compare(
-            engine,
+          this.compare(
             (oldVTree.children[i] as JSXComponentElement).instance,
             oldVTree.children[i],
             newVTree.children[i],
           );
         } else {
           if (!!oldVTree.portalElement)
-            Comparator.compare(
-              engine,
-              oldVTree.portalElement,
-              oldVTree.children[i],
-              newVTree.children[i],
-            );
+            this.compare(oldVTree.portalElement, oldVTree.children[i], newVTree.children[i]);
           else
-            Comparator.compare(
-              engine,
+            this.compare(
               el.childNodes.item(i) as HTMLElement | Text,
               oldVTree.children[i],
               newVTree.children[i],
@@ -93,7 +94,7 @@ class Comparator {
    * @returns Boolean: true if the element should be re-created from the new
    * virtual dom tree and false otherwise.
    */
-  public static shouldReplaceElement(
+  private shouldReplaceElement(
     oldVTree: JSXElement | string,
     newVTree: JSXElement | string,
   ): boolean {
@@ -128,7 +129,7 @@ class Comparator {
    * @param oldVTree - Current DOM virtual tree
    * @param newVTree - New virtual dom
    */
-  public static updateElementProps(
+  private updateElementProps(
     el: HTMLElement | PureComponent,
     oldVTree: JSXElement,
     newVTree: JSXElement,

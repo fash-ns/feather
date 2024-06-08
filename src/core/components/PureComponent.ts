@@ -28,10 +28,16 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   protected engine: Engine;
 
+  /**
+   * An instance of Comparator class with injected engine.
+   */
+  private comparator: Comparator;
+
   public constructor(props: Props) {
     this.engine = props.engine;
     delete props.engine;
     this.props = props;
+    this.comparator = new Comparator(this.engine);
   }
 
   /**
@@ -74,7 +80,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   protected update(): void {
     const newTree = this.render();
-    this.rootElement = Comparator.compare(this.engine, this.rootElement, this.tree, newTree);
+    this.rootElement = this.comparator.compare(this.rootElement, this.tree, newTree);
     this.tree = newTree;
     this.onUpdateFinished();
   }
