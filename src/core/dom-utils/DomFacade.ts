@@ -80,21 +80,23 @@ class DomFacade {
 
   public static removeChildNode(element: ChildNode, vDomTree: JSXElement | string) {
     if (typeof vDomTree !== 'string') {
-      vDomTree.children.forEach((child) => {
-        this.removeChildNode(element.childNodes.item(0), child);
-      });
-      if (vDomTree.type === JSXElementType.Component) vDomTree.instance.unmount();
-      else if (!!vDomTree.portalContainer) {
-        this.removeRootEventListeners(vDomTree.portalElement, vDomTree);
-        vDomTree.portalElement.remove();
+      if (!!vDomTree.portalContainer) {
+        const portalDomTree = { ...vDomTree };
+        delete portalDomTree.portalContainer;
+        delete portalDomTree.portalElement;
+        this.removeChildNode(vDomTree.portalElement, portalDomTree);
         element.remove();
       } else {
-        this.removeRootEventListeners(element, vDomTree);
-        element.remove();
+        vDomTree.children.forEach((child) => {
+          this.removeChildNode(element.childNodes.item(0), child);
+        });
+        if (vDomTree.type === JSXElementType.Component) vDomTree.instance.unmount();
+        else {
+          this.removeRootEventListeners(element, vDomTree);
+          element.remove();
+        }
       }
-    } else {
-      element.remove();
-    }
+    } else element.remove();
   }
 }
 
