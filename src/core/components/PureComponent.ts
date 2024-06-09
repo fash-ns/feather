@@ -90,7 +90,6 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   public unmount(): void {
     this.onUnmount();
-    DomFacade.removeEventListeners(this.getDomElement(), this.tree);
     DomFacade.removeChildNode(this.getDomElement(), this.tree);
     delete this.tree;
     delete this.rootElement;
@@ -99,12 +98,12 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   /**
    * onMount method is triggered when the component's DOM is rendered for the first time.
    */
-  protected onMount(): void {}
+  protected onMount(): void { }
 
   /**
    * onUnmount method is triggered when the component is being to be unmounted.
    */
-  protected onUnmount(): void {}
+  protected onUnmount(): void { }
 
   /**
    * onPropsChange method is triggered when the component's props are going to be updated.
@@ -114,12 +113,12 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
   protected onPropsChange(
     prevProps: Omit<Props, 'engine'>,
     newProps: Omit<Props, 'engine'>,
-  ): void {}
+  ): void { }
 
   /**
    * onUpdateFinished method is triggered after the component is updated.
    */
-  protected onUpdateFinished(): void {}
+  protected onUpdateFinished(): void { }
 
   /**
    * All the JSX render should be returned by this method. All components must implement this method.

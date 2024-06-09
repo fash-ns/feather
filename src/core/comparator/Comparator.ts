@@ -55,7 +55,7 @@ class Comparator {
       for (let i = 0; i < maxLen; i++) {
         if (childNodesLen <= i) this.engine.appendDomAsChildren(el, newVTree.children[i]);
         else if (vDomChildrenLen <= i) {
-          DomFacade.removeChildNode(el.childNodes.item(i), oldVTree);
+          DomFacade.removeChildNode(el.childNodes.item(i), oldVTree.children[i]);
         } else if (
           typeof oldVTree.children[i] !== 'string' &&
           (oldVTree.children[i] as JSXElement).type === JSXElementType.Component
@@ -107,8 +107,11 @@ class Comparator {
     // Both are JSXElements but with different types
     if (oldVTree.type !== newVTree.type) return true;
 
+    // Both are JSXElement which initiate component but initiated components are different
+    if (oldVTree.type === JSXElementType.Component && oldVTree.tag.constructor !== newVTree.tag.constructor)
+      return true;
+
     // Both are JSXElements and renders HTMLElement but with different HTML tags
-    // Or Both are JSXElements and renders Component but different components
     if (oldVTree.tag !== newVTree.tag) return true;
 
     return false;
