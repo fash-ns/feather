@@ -108,7 +108,10 @@ class Comparator {
     if (oldVTree.type !== newVTree.type) return true;
 
     // Both are JSXElement which initiate component but initiated components are different
-    if (oldVTree.type === JSXElementType.Component && oldVTree.tag.constructor !== newVTree.tag.constructor)
+    if (
+      oldVTree.type === JSXElementType.Component &&
+      oldVTree.tag.constructor !== newVTree.tag.constructor
+    )
       return true;
 
     // Both are JSXElements and renders HTMLElement but with different HTML tags

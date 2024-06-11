@@ -1,6 +1,6 @@
-import JSXFacade from '../core/JSXFacade';
-import PureComponent from '../core/components/PureComponent';
-import type { JSXElement } from '../core/interfaces/JSXInterfaces';
+import JSXFacade from 'feather-jsx/JSXFacade';
+import PureComponent from 'feather-jsx/components/PureComponent';
+import type { JSXElement } from 'feather-jsx/interfaces/JSXInterfaces';
 import './App.css';
 import Counter from './Couter';
 import DialogTest from './DialogTest';

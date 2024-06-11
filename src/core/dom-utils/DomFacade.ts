@@ -1,3 +1,4 @@
+import PureComponent from 'feather-jsx/components/PureComponent';
 import {
   JSXElementType,
   type EventListenerProp,
@@ -37,7 +38,11 @@ class DomFacade {
   ): void {
     if (!attributes) return;
     Object.entries(attributes).forEach(([key, val]) => {
-      if (key === 'ref') {
+      if (!val) {
+        element.removeAttribute(key);
+        return;
+      }
+      if (key === 'ref' && !!val) {
         val.current = element;
       } else if (key.startsWith('on')) {
         const eventName = key.substring(2).toLowerCase();
@@ -78,7 +83,11 @@ class DomFacade {
     });
   }
 
-  public static removeChildNode(element: ChildNode, vDomTree: JSXElement | string) {
+  public static removeChildNode(element: ChildNode | PureComponent, vDomTree: JSXElement | string) {
+    if (element instanceof PureComponent) {
+      element.unmount();
+      return;
+    }
     if (typeof vDomTree !== 'string') {
       if (!!vDomTree.portalContainer) {
         const portalDomTree = { ...vDomTree };

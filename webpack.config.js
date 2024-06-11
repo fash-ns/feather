@@ -48,6 +48,9 @@ const config = {
     ],
   },
   resolve: {
+    alias: {
+      'feather-jsx': path.resolve(__dirname, 'src/core/'),
+    },
     extensions: ['.tsx', '.ts', '.js'],
   },
 };

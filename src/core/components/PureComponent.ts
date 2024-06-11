@@ -2,7 +2,7 @@ import Comparator from '../comparator/Comparator';
 import DomFacade from '../dom-utils/DomFacade';
 import Engine from '../Engine';
 import type { ComponentProps } from '../interfaces/componentInterfaces';
-import type { JSXElement } from '../interfaces/JSXInterfaces';
+import { JSXElementType, type JSXElement } from '../interfaces/JSXInterfaces';
 
 /**
  * @public
@@ -46,20 +46,32 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    * @returns The created root element of the component
    * @see Engine.createDomElement to check how this element is created
    */
-  public createDomElement(): HTMLElement | Text {
+  public createDomElement(): HTMLElement | Text | PureComponent {
     this.tree = this.render();
     this.rootElement = this.engine.createDomElement(this.tree);
+    if (this.tree.type === JSXElementType.Component) this.rootElement = this.tree.instance;
     this.onMount();
     return this.rootElement;
   }
 
   /**
+   * Gets the root element of the component. It could be either a native HTML element or a component
    * @returns The root element created by component.
    */
-  public getDomElement(): HTMLElement | Text {
-    if (this.rootElement instanceof PureComponent) return this.rootElement.getDomElement();
+  public getRootElement(): HTMLElement | Text | PureComponent {
     return this.rootElement;
   }
+
+  /**
+   * Gets the root HTML DOM element of the component.
+   * @returns The root DOM element created by component.
+   */
+  public getRootDomElement(): HTMLElement | Text {
+    if (this.rootElement instanceof PureComponent) return this.rootElement.getRootDomElement();
+    return this.rootElement;
+  }
+
+  /** */
 
   /**
    * When props is changed by a top level component's state, the new props will be set for the component using setProps method.
@@ -90,7 +102,7 @@ abstract class PureComponent<Props extends ComponentProps = ComponentProps> {
    */
   public unmount(): void {
     this.onUnmount();
-    DomFacade.removeChildNode(this.getDomElement(), this.tree);
+    DomFacade.removeChildNode(this.getRootElement(), this.tree);
     delete this.tree;
     delete this.rootElement;
   }

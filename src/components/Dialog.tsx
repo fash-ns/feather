@@ -1,8 +1,8 @@
-import JSXFacade from '../core/JSXFacade';
-import Utils from '../core/Utils';
-import Component from '../core/components/Component';
-import { JSXElement, RefObject } from '../core/interfaces/JSXInterfaces';
-import { ComponentProps } from '../core/interfaces/componentInterfaces';
+import JSXFacade from 'feather-jsx/JSXFacade';
+import Utils from 'feather-jsx/Utils';
+import Component from 'feather-jsx/components/Component';
+import { JSXElement, RefObject } from 'feather-jsx/interfaces/JSXInterfaces';
+import { ComponentProps } from 'feather-jsx/interfaces/componentInterfaces';
 import './dialog.css';
 
 interface DialogProps extends ComponentProps {
@@ -45,15 +45,13 @@ class Dialog extends Component<DialogProps, DialogState> {
   }
 
   public render(): JSXElement {
-    return this.state.open ? (
+    return this.state.open && Utils.createPortal((
       <div ref={this.containerRef} onClick={this.props.onClose} class="dialog-container fade">
         <div class="dialog-body" onClick={(e: MouseEvent) => e.stopPropagation()}>
           Salam
         </div>
       </div>
-    ) : (
-      ''
-    );
+    ), document.body);
   }
 }
 

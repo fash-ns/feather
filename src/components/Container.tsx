@@ -1,6 +1,6 @@
-import JSXFacade from '../core/JSXFacade';
-import PureComponent from '../core/components/PureComponent';
-import { JSXElement } from '../core/interfaces/JSXInterfaces';
+import JSXFacade from 'feather-jsx/JSXFacade';
+import PureComponent from 'feather-jsx/components/PureComponent';
+import { JSXElement } from 'feather-jsx/interfaces/JSXInterfaces';
 
 class Container extends PureComponent {
   public render(): JSXElement {

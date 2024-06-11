@@ -1,6 +1,6 @@
-import JSXFacade from '../core/JSXFacade';
-import Utils from '../core/Utils';
-import Component from '../core/components/Component';
+import JSXFacade from 'feather-jsx/JSXFacade';
+import Utils from 'feather-jsx/Utils';
+import Component from 'feather-jsx/components/Component';
 
 class Counter extends Component {
   public constructor(props: {}) {

@@ -1,8 +1,7 @@
-import JSXFacade from '../core/JSXFacade';
-import Utils from '../core/Utils';
-import Component from '../core/components/Component';
-import type { JSXElement } from '../core/interfaces/JSXInterfaces';
-import { ComponentProps } from '../core/interfaces/componentInterfaces';
+import JSXFacade from 'feather-jsx/JSXFacade';
+import Component from 'feather-jsx/components/Component';
+import type { JSXElement } from 'feather-jsx/interfaces/JSXInterfaces';
+import { ComponentProps } from 'feather-jsx/interfaces/componentInterfaces';
 import TestService from '../services/TestService';
 import Dialog from './Dialog';
 
@@ -31,10 +30,7 @@ class DialogTest extends Component<ComponentProps, DialogTestState> {
     return (
       <div>
         <button onClick={this.handleOpenDialog}>Open Dialog</button>
-        {Utils.createPortal(
-          <Dialog open={this.state.openDialog} onClose={this.handleCloseDialog} />,
-          document.body,
-        )}
+        <Dialog open={this.state.openDialog} onClose={this.handleCloseDialog} />
       </div>
     );
   }

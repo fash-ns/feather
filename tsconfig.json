@@ -10,7 +10,11 @@
     "jsxFactory": "JSXFacade.createElement",
     "rootDir": "src",
     "outDir": "dist/tsc",
-    "declaration": true
+    "declaration": true,
+    "paths": {
+      "feather-jsx": ["./src/core"],
+      "feather-jsx/*": ["./src/core/*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }

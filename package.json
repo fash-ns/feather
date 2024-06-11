@@ -1,7 +1,7 @@
 {
   "name": "feather-jsx",
   "description": "A super lightweight reactive engine for developing tiny client-side utils",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",

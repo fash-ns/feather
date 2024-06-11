@@ -49,8 +49,8 @@ class Engine {
    */
   public renderRoot(Element: ClassConstructor<PureComponent>, container: HTMLElement) {
     this.rootComponent = new Element({ engine: this });
-    const nativeElement = this.rootComponent.createDomElement();
-    container.appendChild(nativeElement);
+    this.rootComponent.createDomElement();
+    container.appendChild(this.rootComponent.getRootDomElement());
   }
 
   /**
@@ -88,9 +88,9 @@ class Engine {
         children: element.children,
         engine: this,
       });
-      const nativeElement = component.createDomElement();
+      component.createDomElement();
       element.instance = component;
-      return nativeElement;
+      return component.getRootDomElement();
     } else
       throw new Error(
         `Unknown type provided as element. provided ${element}
@@ -151,7 +151,7 @@ class Engine {
     newVDomTree: JSXElement | string,
   ) {
     if (prevElement instanceof PureComponent) {
-      const element = this.appendDomAsSibling(prevElement.getDomElement(), newVDomTree);
+      const element = this.appendDomAsSibling(prevElement.getRootDomElement(), newVDomTree);
       prevElement.unmount();
       return element;
     } else {
